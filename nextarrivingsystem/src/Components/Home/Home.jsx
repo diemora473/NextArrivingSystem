@@ -17,7 +17,7 @@ const Home = ({user}) => {
 {user.rol === "client" ? <Clients/> : <Admin/>}
 <div>
 
-            <button onClick={() => signOut(auth)}>Cerra sesion</button>
+            <button className="btn rounded-full hover:bg-red-600" onClick={() => signOut(auth)}>Cerra sesion</button>
 </div>
         </div>
     )
