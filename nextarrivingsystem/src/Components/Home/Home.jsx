@@ -21,19 +21,19 @@ console.log("soy auth", auth);
 
 const Home = ({ user }) => {
   return (
-    <div>
+    <div className="bg-gray-200">
       {/* <div>{user.email}</div>
       <div>{user.rol}</div> */}
       <div>{/* <Registers/> */}</div>
       {user.rol === "client" ? <Clients /> : <Admin user={user} />}
-      {/* <div>
+      <div>
         <button
           className="btn rounded-full hover:bg-red-600"
           onClick={() => signOut(auth)}
         >
           Cerra sesion
         </button>
-      </div> */}
+      </div>
     </div>
   );
 };

@@ -27,9 +27,11 @@ import {
   Input,
   useDisclosure,
   Button,
+  Divider,
 } from "@chakra-ui/react";
 import Prueba from "../Prueba/Prueba";
 import Create from "./Create";
+import MoreModal from "../MoreModal/MoreModal";
 const auth = getAuth();
 const MySwal = withReactContent(Swal);
 
@@ -120,25 +122,27 @@ function AllOrders({ Admin }) {
           </Button>
         </div>
       </div>
-      <div className="flex justify-center items-center pt-20">
-        <TableContainer className="w-1/2  border border rounded-xl">
+      <div className="flex justify-center items-center pt-20 ">
+        <TableContainer className="w-1/2  border border rounded-xl bg-white ">
           <Table variant="simple ">
             <TableCaption>NextArriving system</TableCaption>
-            <Thead className="bg-gray-500 text-white ">
+            <Thead className="bg-gray-500 text-white  ">
               <Tr>
                 <Th>Cliente</Th>
                 <Th>Telefono</Th>
                 <Th>Direccion</Th>
+                <Th>Localidad</Th>
                 <Th></Th>
               </Tr>
             </Thead>
             {orders.map((order) => (
-              <Tbody>
-                <Tr className="">
-                  <Td className="flex items-center">{order.name}</Td>
-                  <Td>{order.phone}</Td>
+              <Tbody className="">
+                <Tr className="  lex justify-center">
+                  <Td className="fl items-center  ">{order.name}</Td>
+                  <Td className="">{order.phone}</Td>
                   <Td>{order.direction}</Td>
-                  <div className="flex items-center ">
+                  <Td>{order.location}</Td>
+                  <div className="flex justify-center items-center">
                     <Link to={`edit/${order.id}`}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -184,6 +188,9 @@ function AllOrders({ Admin }) {
                         <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
                       </svg>
                     </button>
+                    <div className="flex items-center justify-center">
+                      <MoreModal orders={orders} />
+                    </div>
                   </div>
                 </Tr>
               </Tbody>
