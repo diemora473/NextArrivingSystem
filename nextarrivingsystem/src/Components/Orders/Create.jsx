@@ -1,106 +1,131 @@
-import React,{useState} from 'react'
-import {useNavigate} from 'react-router-dom';
-import {collection, addDoc} from 'firebase/firestore';
-import {db} from '../../Firebase/Firebase';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { collection, addDoc } from "firebase/firestore";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import FirebaseApp, { db } from "../../Firebase/Firebase";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  useDisclosure,
+} from "@chakra-ui/react";
+const auth = getAuth(FirebaseApp);
+console.log("soy auth", auth);
 
-function Create() {
-    const[name, setName] = useState('');
-    const[phone, setPhone] = useState(0);
-    const[location, setLocation] = useState('');
-    const navigate = useNavigate();
-    const ordersCollections = collection(db, "products");
+function Create({ user }) {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState(0);
+  const [direction, setDirection] = useState("");
+  const [location, setLocation] = useState("");
+  const [description, setDescription] = useState("");
+  const [reference, setReference] = useState("");
+  const navigate = useNavigate();
+  const ordersCollections = collection(db, "products");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [size, setSize] = React.useState("md");
+  const initialRef = React.useRef(null);
+  const finalRef = React.useRef(null);
+  const add = async (e) => {
+    e.preventDefault();
+    await addDoc(ordersCollections, {
+      name: name,
+      phone: phone,
+      location: location,
+      description: description,
+      direction: direction,
+      createdBy: auth.currentUser.uid,
+    });
+    navigate("/");
+  };
+  const handleSizeClick = (newSize) => {
+    setSize(newSize);
+    onOpen();
+  };
 
-    const add = async (e) => {
-        e.preventDefault();
-        await addDoc(ordersCollections, {name: name, phone:phone,location:location})
-        navigate('/')
-    }
+  const sizes = ["xl"];
   return (
-    <div className='flex justify-center '>
-    <div class="  p-6 rounded-lg shadow-lg flex justify-center bg-slate-800 max-w-md">
-  <form onSubmit={add}>
-        <label className=' absolute text-white flex jusfity-start'>Name: </label>
-        <label className='text-white pl-40'> Numero de telefono:</label>
-    <div class="grid grid-cols-2 gap-4">
-      <div class="form-group mb-4">
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} class="form-control
-          block
-          w-full
-          px-3
-          py-1.5
-          text-base
-          font-normal
-          text-gray-700
-          bg-white bg-clip-padding
-          border border-solid border-gray-300
-          rounded
-          transition
-          ease-in-out
-          m-0
-          focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" 
-          aria-describedby="emailHelp123" placeholder="Nombre del cliente" required/>
-      </div>
-      <div class="form-group mb-6">
-      
-        <input type="number" value={phone} onChange={(e) => setPhone(e.target.value)} class="form-control
-          block
-          w-full
-          px-3
-          py-1.5
-          text-base
-          font-normal
-          text-gray-700
-          bg-white bg-clip-padding
-          border border-solid border-gray-300
-          rounded
-          transition
-          ease-in-out
-          m-0
-          focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" 
-          aria-describedby="emailHelp124" placeholder="Last name"/>
-      </div>
+    <div className="flex justify-center ">
+      {sizes.map((size) => (
+        <Button onClick={() => handleSizeClick(size)} key={size} m={4}>
+          {"Añadir"}
+        </Button>
+      ))}
+      <Modal
+        initialFocusRef={initialRef}
+        finalFocusRef={finalRef}
+        isOpen={isOpen}
+        onClose={onClose}
+        size={size}
+      >
+        <div className="flex grid grid-cols-4">
+          <form onSubmit={add}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Añadi tu pedido!</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={6} className="grid grid-cols-2 gap-2">
+                <FormControl>
+                  <FormLabel>Nombre del cliente</FormLabel>
+                  <Input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl pb={6}>
+                  <FormLabel>Celular</FormLabel>
+                  <Input
+                    type="number"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl pb={6}>
+                  <FormLabel>Direccion</FormLabel>
+                  <Input
+                    type="text"
+                    value={direction}
+                    onChange={(e) => setDirection(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl pb={6}>
+                  <FormLabel>Localidad</FormLabel>
+                  <Input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
+                </FormControl>
+                <FormControl pb={6}>
+                  <FormLabel>Description</FormLabel>
+                  <Input
+                    type="text"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </FormControl>
+              </ModalBody>
+
+              <ModalFooter>
+                <Button type="submit" colorScheme="blue" mr={3}>
+                  Añadir
+                </Button>
+                <Button onClick={onClose}>Cerrar</Button>
+              </ModalFooter>
+            </ModalContent>
+          </form>
+        </div>
+      </Modal>
     </div>
-    <div class="form-group mb-6">
-      <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} class="form-control block
-        w-full
-        px-3
-        py-1.5
-        text-base
-        font-normal
-        text-gray-700
-        bg-white bg-clip-padding
-        border border-solid border-gray-300
-        rounded
-        transition
-        ease-in-out
-        m-0
-        focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" 
-        placeholder="Email address"/>
-    </div>
-   
-    
-    <button type="submit" class="
-      w-full
-      px-6
-      py-2.5
-      bg-blue-600
-      text-white
-      font-medium
-      text-xs
-      leading-tight
-      uppercase
-      rounded
-      shadow-md
-      hover:bg-blue-700 hover:shadow-lg
-      focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0
-      active:bg-blue-800 active:shadow-lg
-      transition
-      duration-150
-      ease-in-out">Crear Pedido!</button>
-  </form>
-</div>
-</div>
-  )
+  );
 }
 
-export default Create
+export default Create;

@@ -9,10 +9,12 @@ import Login from "./Components/Login/login";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Edit from "./Components/Orders/Edit";
 import Create from "./Components/Orders/Create";
+import Prueba from "./Components/Prueba/Prueba";
 const auth = getAuth(FirebaseApp);
 
 function App() {
   const [user, setUser] = useState(null);
+  console.log(user);
   const firestore = getFirestore(FirebaseApp);
 
   async function getRol(uid) {
@@ -29,6 +31,7 @@ function App() {
         rol: rol,
       };
       setUser(userData);
+      console.log(userData);
     });
   }
   onAuthStateChanged(auth, (usuarioFirebase) => {
@@ -36,6 +39,7 @@ function App() {
       if (!user) {
         setUserWithFirebaseRol(usuarioFirebase);
       }
+      console.log(usuarioFirebase);
     } else {
       setUser(null);
     }
@@ -50,8 +54,17 @@ function App() {
               path="/"
               element={<Home user={user} correo={user.email} />}
             ></Route>
-            <Route exact path='/edit/:id' element={<Edit/>}></Route>
-            <Route exact path='/Create' element={<Create/>}></Route>
+            <Route exact path="/edit/:id" element={<Edit />}></Route>
+            <Route
+              exact
+              path="/Create"
+              element={<Create user={user} />}
+            ></Route>
+            <Route
+              exact
+              path="/Prueba"
+              element={<Prueba user={user} />}
+            ></Route>
           </Routes>
         ) : (
           <Login />
